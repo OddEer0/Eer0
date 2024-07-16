@@ -1,0 +1,11 @@
+version: 3
+
+tasks:
+  test:
+    cmds:
+      - go test -race ./...
+  cover:
+    cmds:
+      - go test -race -v -coverpkg=./... -coverprofile=c.out ./...
+      - go tool cover -html="c.out"
+      - rm c.out
