@@ -2,37 +2,38 @@ package elogger
 
 import (
 	"context"
-	"log/slog"
+	"time"
 )
 
-func (l *logger) Debug(ctx context.Context, msg string, fields ...Field) {
-	attrs := make([]any, 0, len(fields))
-	for _, field := range fields {
-		attrs = append(attrs, slog.Any(field.Key, field.Value))
+func (l *logger) Log(ctx context.Context, level Level, msg string, fields ...Field) {
+	if !l.handler.Enabled(ctx, level) {
+		return
 	}
-	l.log.DebugContext(ctx, msg, attrs...)
+
+	err := l.handler.Handle(ctx, Record{
+		Level:   level,
+		Message: msg,
+		Time:    time.Now(),
+		fields:  fields,
+	})
+
+	if err != nil {
+		panic(err)
+	}
+}
+
+func (l *logger) Debug(ctx context.Context, msg string, fields ...Field) {
+	l.Log(ctx, DebugLevel, msg, fields...)
 }
 
 func (l *logger) Info(ctx context.Context, msg string, fields ...Field) {
-	attrs := make([]any, 0, len(fields))
-	for _, field := range fields {
-		attrs = append(attrs, slog.Any(field.Key, field.Value))
-	}
-	l.log.InfoContext(ctx, msg, attrs...)
+	l.Log(ctx, InfoLevel, msg, fields...)
 }
 
 func (l *logger) Warn(ctx context.Context, msg string, fields ...Field) {
-	attrs := make([]any, 0, len(fields))
-	for _, field := range fields {
-		attrs = append(attrs, slog.Any(field.Key, field.Value))
-	}
-	l.log.WarnContext(ctx, msg, attrs...)
+	l.Log(ctx, WarnLevel, msg, fields...)
 }
 
 func (l *logger) Error(ctx context.Context, msg string, fields ...Field) {
-	attrs := make([]any, 0, len(fields))
-	for _, field := range fields {
-		attrs = append(attrs, slog.Any(field.Key, field.Value))
-	}
-	l.log.ErrorContext(ctx, msg, attrs...)
+	l.Log(ctx, ErrorLevel, msg, fields...)
 }

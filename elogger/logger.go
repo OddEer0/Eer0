@@ -3,7 +3,6 @@ package elogger
 import (
 	"context"
 	"io"
-	"log/slog"
 )
 
 type (
@@ -15,6 +14,7 @@ type (
 	}
 
 	Logger interface {
+		Log(ctx context.Context, level Level, format string, fields ...Field)
 		Debug(ctx context.Context, msg string, fields ...Field)
 		Info(ctx context.Context, msg string, fields ...Field)
 		Warn(ctx context.Context, msg string, fields ...Field)
@@ -28,15 +28,19 @@ type (
 		Level
 	}
 
+	Handler interface {
+		Enabled(context.Context, Level) bool
+		Handle(context.Context, Record) error
+		WithFields(attrs []Field) Handler
+	}
+
 	logger struct {
-		log *slog.Logger
+		handler Handler
 	}
 )
 
-func New(opt *Options) Logger {
-	h := newHandler(opt)
-	l := slog.New(h)
+func New(h Handler) Logger {
 	return &logger{
-		log: l,
+		handler: h,
 	}
 }
