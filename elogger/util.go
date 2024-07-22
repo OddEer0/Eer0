@@ -1,7 +1,6 @@
 package elogger
 
 import (
-	"encoding/json"
 	"log/slog"
 )
 
@@ -30,26 +29,3 @@ func mapLevelToSlogLevel(lvl Level) slog.Level {
 //		return ErrorLevel
 //	}
 //}
-
-func (l Level) String() string {
-	switch l {
-	case DebugLevel:
-		return "DEBUG"
-	case InfoLevel:
-		return "INFO"
-	case WarnLevel:
-		return "WARN"
-	case ErrorLevel:
-		return "ERROR"
-	}
-	return "UNKNOWN"
-}
-
-func (v Value) MarshalJSON() ([]byte, error) {
-	r, ok := v.Val.(LogValuer)
-	if ok {
-		return json.Marshal(r.LogValue())
-	}
-
-	return json.Marshal(v.Val)
-}
