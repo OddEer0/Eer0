@@ -2,8 +2,8 @@ package elogger
 
 import (
 	"context"
+	"io"
 	"log/slog"
-	"os"
 )
 
 type jsonHandler struct {
@@ -14,6 +14,7 @@ type jsonHandler struct {
 type JsonHandlerOption struct {
 	AddSource bool
 	Level
+	Output io.Writer
 }
 
 func (j *jsonHandler) Enabled(ctx context.Context, level Level) bool {
@@ -45,7 +46,7 @@ func (j *jsonHandler) WithFields(fields []Field) Handler {
 
 func NewJsonHandler(opt *JsonHandlerOption) Handler {
 	return &jsonHandler{
-		Handler: slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+		Handler: slog.NewJSONHandler(opt.Output, &slog.HandlerOptions{
 			Level:     mapLevelToSlogLevel(opt.Level),
 			AddSource: opt.AddSource,
 		}),

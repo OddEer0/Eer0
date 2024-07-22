@@ -8,12 +8,21 @@ import (
 type (
 	Level int
 
+	LogValuer interface {
+		LogValue() Value
+	}
+
+	Value struct {
+		Val interface{}
+	}
+
 	Field struct {
 		Key   string
-		Value interface{}
+		Value Value
 	}
 
 	Logger interface {
+		WithFields(fields ...Field) Logger
 		Log(ctx context.Context, level Level, format string, fields ...Field)
 		Debug(ctx context.Context, msg string, fields ...Field)
 		Info(ctx context.Context, msg string, fields ...Field)

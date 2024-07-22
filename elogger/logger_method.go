@@ -37,3 +37,8 @@ func (l *logger) Warn(ctx context.Context, msg string, fields ...Field) {
 func (l *logger) Error(ctx context.Context, msg string, fields ...Field) {
 	l.Log(ctx, ErrorLevel, msg, fields...)
 }
+
+func (l *logger) WithFields(fields ...Field) Logger {
+	h := l.handler.WithFields(fields)
+	return &logger{h}
+}
