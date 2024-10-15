@@ -2,7 +2,7 @@ package eerror_test
 
 import (
 	"errors"
-	"github.com/OddEer0/Eer0/eerror"
+	"github.com/OddEer0/Eer0/error/eerror"
 	"github.com/stretchr/testify/assert"
 	"strconv"
 	"strings"

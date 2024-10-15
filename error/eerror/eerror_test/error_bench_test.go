@@ -2,7 +2,7 @@ package eerror
 
 import (
 	"fmt"
-	"github.com/OddEer0/Eer0/eerror"
+	"github.com/OddEer0/Eer0/error/eerror"
 	"github.com/pkg/errors"
 	"os"
 	"testing"

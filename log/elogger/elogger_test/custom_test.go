@@ -2,7 +2,7 @@ package elogger_test
 
 import (
 	"context"
-	"github.com/OddEer0/Eer0/elogger"
+	"github.com/OddEer0/Eer0/log/elogger"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

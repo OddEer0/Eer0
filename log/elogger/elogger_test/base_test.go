@@ -3,7 +3,7 @@ package elogger_test
 import (
 	"context"
 	"encoding/json"
-	"github.com/OddEer0/Eer0/elogger"
+	"github.com/OddEer0/Eer0/log/elogger"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"io"
