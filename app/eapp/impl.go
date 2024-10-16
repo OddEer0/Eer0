@@ -58,6 +58,7 @@ func (a *app) Start() error {
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -69,7 +70,10 @@ func (a *app) Stop() error {
 		return err
 	}
 
-	// TODO - обработка всех after handlers
+	err = a.afterHandle(ctxTimeout)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

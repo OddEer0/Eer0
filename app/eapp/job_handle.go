@@ -29,11 +29,13 @@ func closeJobHandle(ctx context.Context, key string, job Job, wg *sync.WaitGroup
 	defer completed.Add(key)
 	defer func() {
 		if r := recover(); r != nil {
+			wg.Add(1)
 			errCh <- errors.Errorf("{key: %s, panic: %v}", key, r)
 		}
 	}()
 	err := job.Close(ctx)
 	if err != nil {
+		wg.Add(1)
 		errCh <- errors.Errorf("{key: %s, err: %v}", key, err)
 	}
 }
@@ -78,6 +80,7 @@ func (a *app) closeJob(ctx context.Context) error {
 
 		go func() {
 			for err := range errCh {
+				wg.Done()
 				multiErr.Add(err)
 			}
 		}()

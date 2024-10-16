@@ -15,6 +15,7 @@ func (a *app) beforeHandle(ctx context.Context) error {
 	go func() {
 		errCh := make(chan error, len(a.beforeHandlers))
 		wg := &sync.WaitGroup{}
+
 		for _, h := range a.beforeHandlers {
 			wg.Add(1)
 			go beforeHandle(ctx, h, a.configs.Client, completed, wg, errCh)
@@ -23,6 +24,7 @@ func (a *app) beforeHandle(ctx context.Context) error {
 		go func(errorCh chan error) {
 			for err := range errorCh {
 				multiErr.Add(err)
+				wg.Done()
 			}
 		}(errCh)
 
@@ -64,12 +66,14 @@ func beforeHandle(ctx context.Context, h BeforeHandler, cfg any, completed eset.
 	defer completed.Add(h.Key)
 	defer func() {
 		if r := recover(); r != nil {
+			wg.Add(1)
 			errCh <- errors.Errorf("{key: %s, panic: %v}", h.Key, r)
 		}
 	}()
 
 	err := h.Handler(ctx, cfg)
 	if err != nil {
+		wg.Add(1)
 		errCh <- errors.Errorf("{key: %s, err: %v}", h.Key, err)
 	}
 }
