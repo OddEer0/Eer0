@@ -116,11 +116,14 @@ func TestApp(t *testing.T) {
 
 	t.Run("Should correct options", func(t *testing.T) {
 		cfg := &clientConf{}
-		app := Init(initOpt).
-			WithOptions(&Option{
-				UserCfgInterceptor: UserInter,
-				LibCfgInterceptor:  LibInter,
-			}).
+		opt := &InitOptions{
+			Name:               "my-app",
+			Version:            "0.0.1",
+			Description:        "This is my app",
+			UserCfgInterceptor: UserInter,
+			LibCfgInterceptor:  LibInter,
+		}
+		app := Init(opt).
 			LibConfig(libCfg).
 			WithConfig(cfg)
 

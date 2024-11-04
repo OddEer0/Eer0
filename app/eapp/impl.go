@@ -9,20 +9,6 @@ func (a *App) Err() error {
 	return a.err
 }
 
-type Option struct {
-	UserCfgInterceptor UserConfigInterceptor
-	LibCfgInterceptor  LibConfigInterceptor
-}
-
-func (a *App) WithOptions(opt *Option) *App {
-	if a.err != nil {
-		return nil
-	}
-	a.userCfgInterceptor = opt.UserCfgInterceptor
-	a.libCfgInterceptor = opt.LibCfgInterceptor
-	return a
-}
-
 func (a *App) WithJobs(jobs ...JobOption) *App {
 	for _, job := range jobs {
 		a.jobs[job.Key] = job.Job

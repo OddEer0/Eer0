@@ -7,9 +7,11 @@ import (
 
 type (
 	InitOptions struct {
-		Name        string
-		Version     string
-		Description string
+		Name               string
+		Version            string
+		Description        string
+		UserCfgInterceptor UserConfigInterceptor `estruct:"-"`
+		LibCfgInterceptor  LibConfigInterceptor  `estruct:"-"`
 	}
 )
 
@@ -31,6 +33,8 @@ func Init(opt *InitOptions) *App {
 	result.beforeHandlers = make(map[string]BeforeHandler, 8)
 	result.afterHandlers = make(map[string]AfterHandler, 8)
 	result.jobs = make(map[string]Job, 8)
+	result.userCfgInterceptor = opt.UserCfgInterceptor
+	result.libCfgInterceptor = opt.LibCfgInterceptor
 
 	return result
 }
