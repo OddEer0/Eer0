@@ -7,7 +7,7 @@ import (
 	"sync"
 )
 
-func (a *app) beforeHandle(ctx context.Context) error {
+func (a *App) beforeHandle(ctx context.Context) error {
 	multiErr := newMultiError(", ")
 	successCh := make(chan struct{})
 	completed := eset.New[string]()

@@ -25,7 +25,7 @@ func afterHandleFunc(ctx context.Context, wg *sync.WaitGroup, errCh chan<- error
 	}
 }
 
-func (a *app) afterHandle(ctx context.Context) error {
+func (a *App) afterHandle(ctx context.Context) error {
 	complete := eset.New[string]()
 	successCh := make(chan struct{})
 	multiErr := newMultiError(", ")

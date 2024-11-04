@@ -5,32 +5,46 @@ import (
 	"time"
 )
 
-func (a *app) Err() error {
+func (a *App) Err() error {
 	return a.err
 }
 
-func (a *app) WithJobs(jobs ...JobOption) App {
+type Option struct {
+	UserCfgInterceptor UserConfigInterceptor
+	LibCfgInterceptor  LibConfigInterceptor
+}
+
+func (a *App) WithOptions(opt *Option) *App {
+	if a.err != nil {
+		return nil
+	}
+	a.userCfgInterceptor = opt.UserCfgInterceptor
+	a.libCfgInterceptor = opt.LibCfgInterceptor
+	return a
+}
+
+func (a *App) WithJobs(jobs ...JobOption) *App {
 	for _, job := range jobs {
 		a.jobs[job.Key] = job.Job
 	}
 	return a
 }
 
-func (a *app) BeforeHandle(handlers ...BeforeHandler) App {
+func (a *App) BeforeHandle(handlers ...BeforeHandler) *App {
 	for _, h := range handlers {
 		a.beforeHandlers[h.Key] = h
 	}
 	return a
 }
 
-func (a *app) AfterHandle(handlers ...AfterHandler) App {
+func (a *App) AfterHandle(handlers ...AfterHandler) *App {
 	for _, h := range handlers {
 		a.afterHandlers[h.Key] = h
 	}
 	return a
 }
 
-func (a *app) Start() error {
+func (a *App) Start() error {
 	if a.err != nil {
 		return a.err
 	}
@@ -62,7 +76,7 @@ func (a *app) Start() error {
 	return nil
 }
 
-func (a *app) Stop() error {
+func (a *App) Stop() error {
 	ctxTimeout, cancelFunc := context.WithTimeout(context.Background(), time.Second*a.configs.Lib.StopTimeout)
 	defer cancelFunc()
 	err := a.closeJob(ctxTimeout)

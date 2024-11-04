@@ -13,16 +13,16 @@ type (
 	}
 )
 
-func Init(opt *InitOptions) App {
+func Init(opt *InitOptions) *App {
 	err := estruct.NotZero(*opt)
-	result := &app{}
+	result := &App{}
 	if err != nil {
 		result.err = errors.Wrap(err, "[eapp] Init")
 		return result
 	}
 
 	// init struct
-	result.info = info{
+	result.info = Info{
 		name:        opt.Name,
 		version:     opt.Version,
 		description: opt.Description,

@@ -7,7 +7,7 @@ import (
 	"sync"
 )
 
-func (a *app) startJob() error {
+func (a *App) startJob() error {
 	return nil
 }
 
@@ -40,7 +40,7 @@ func closeJobHandle(ctx context.Context, key string, job Job, wg *sync.WaitGroup
 	}
 }
 
-func (a *app) initJobs(ctx context.Context) error {
+func (a *App) initJobs(ctx context.Context) error {
 	errCh := make(chan error)
 
 	go func(ctx context.Context, cfg any, errCh chan<- error, jobs map[string]Job) {
@@ -65,7 +65,7 @@ func (a *app) initJobs(ctx context.Context) error {
 	}
 }
 
-func (a *app) closeJob(ctx context.Context) error {
+func (a *App) closeJob(ctx context.Context) error {
 	multiErr := newMultiError(", ")
 	successCh := make(chan struct{})
 	completed := eset.New[string]()
@@ -118,7 +118,7 @@ func closeJobErrHandle(ctx context.Context, completed eset.Set[string], jobs map
 	return nil
 }
 
-func (a *app) runAllJob(ctx context.Context) error {
+func (a *App) runAllJob(ctx context.Context) error {
 	errCh := make(chan error)
 
 	go func() {

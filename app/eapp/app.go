@@ -23,18 +23,4 @@ type (
 		Key     string
 		Handler func(ctx context.Context, config any) error
 	}
-
-	App interface {
-		LibConfig(conf *LibConfig) App
-		LibConfigByYaml(filePath string) App
-		WithConfig(conf any) App
-		BeforeHandle(handlers ...BeforeHandler) App
-		AfterHandle(handlers ...AfterHandler) App
-		WithJobs(jobs ...JobOption) App
-
-		Start() error
-		Stop() error
-
-		Err() error
-	}
 )

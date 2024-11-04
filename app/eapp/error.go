@@ -1,8 +1,14 @@
 package eapp
 
 import (
+	"github.com/pkg/errors"
 	"strings"
 	"sync"
+)
+
+var (
+	ErrLibConfigToBeNull  = errors.New("lib config is null")
+	ErrUserConfigToBeNull = errors.New("user config is null")
 )
 
 type multiError struct {

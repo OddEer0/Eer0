@@ -1,9 +1,8 @@
 package eapp
 
 import (
-	"github.com/ilyakaznacheev/cleanenv"
+	"context"
 	"github.com/pkg/errors"
-	"os"
 	"time"
 )
 
@@ -14,15 +13,28 @@ type (
 	}
 
 	LibConfig struct {
-		StartTimeout     time.Duration `yaml:"start_timeout"`
-		StopTimeout      time.Duration `yaml:"stop_timeout"`
-		ClientConfigPath string        `yaml:"client_config_path"`
+		StartTimeout time.Duration
+		StopTimeout  time.Duration
+		Info         map[string]any
 	}
 )
 
-func (a *app) LibConfig(conf *LibConfig) App {
+func (a *App) LibConfig(conf *LibConfig) *App {
 	if a.err != nil {
 		return a
+	}
+
+	if conf.Info == nil {
+		conf.Info = make(map[string]any)
+	}
+
+	if a.libCfgInterceptor != nil {
+		var err error
+		conf, err = a.libCfgInterceptor(AppWithContext(context.Background(), a), conf)
+		if err != nil {
+			a.err = err
+			return a
+		}
 	}
 
 	a.configs.Lib = conf
@@ -30,41 +42,22 @@ func (a *app) LibConfig(conf *LibConfig) App {
 	return a
 }
 
-func (a *app) LibConfigByYaml(filePath string) App {
-	if a.err != nil {
-		return a
-	}
-
-	cfg := &LibConfig{}
-	if _, err := os.Stat(filePath); os.IsNotExist(err) {
-		a.err = errors.Wrap(err, "[app.LibConfigByYaml] os.Stat")
-		return a
-	}
-
-	err := cleanenv.ReadConfig(filePath, cfg)
-	if err != nil {
-		a.err = errors.Wrap(err, "[app.LibConfigByYaml] cleanenv.ReadConfig")
-		return a
-	}
-
-	return a
+func (a *App) Configs() *Configs {
+	return a.configs
 }
 
-func (a *app) WithConfig(cfg any) App {
+func (a *App) WithConfig(cfg any) *App {
 	if a.Err() != nil {
 		return a
 	}
 
-	path := a.configs.Lib.ClientConfigPath
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-		a.err = errors.Wrap(err, "[app.WithConfig] os.Stat")
-		return a
-	}
-
-	err := cleanenv.ReadConfig(path, cfg)
-	if err != nil {
-		a.err = errors.Wrap(err, "[app.WithConfig] cleanenv.ReadConfig")
-		return a
+	if a.userCfgInterceptor != nil {
+		var err error
+		cfg, err = a.userCfgInterceptor(AppWithContext(context.Background(), a), cfg)
+		if err != nil {
+			a.err = errors.Wrap(err, "[App] userCfgInterceptor")
+			return a
+		}
 	}
 
 	a.configs.Client = cfg
