@@ -36,6 +36,7 @@ func (a *App) Start() error {
 	}
 	ctxTimeout, cancelFunc := context.WithTimeout(context.Background(), time.Second*a.configs.Lib.StartTimeout)
 	defer cancelFunc()
+	ctxTimeout = AppWithContext(ctxTimeout, a)
 	err := a.beforeHandle(ctxTimeout)
 	if err != nil {
 		return err
@@ -48,6 +49,7 @@ func (a *App) Start() error {
 
 	ctx, cancelFunc := context.WithCancel(context.Background())
 	defer cancelFunc()
+	ctx = AppWithContext(ctx, a)
 	err = a.runAllJob(ctx)
 
 	stopErr := a.Stop()
@@ -65,6 +67,7 @@ func (a *App) Start() error {
 func (a *App) Stop() error {
 	ctxTimeout, cancelFunc := context.WithTimeout(context.Background(), time.Second*a.configs.Lib.StopTimeout)
 	defer cancelFunc()
+	ctxTimeout = AppWithContext(ctxTimeout, a)
 	err := a.closeJob(ctxTimeout)
 	if err != nil {
 		return err

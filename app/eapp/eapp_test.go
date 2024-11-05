@@ -21,7 +21,7 @@ func (j *jobI) Init(ctx context.Context, config any) error {
 	return nil
 }
 
-func (j *jobI) Run() error {
+func (j *jobI) Run(ctx context.Context) error {
 	*j.run = 1
 	return nil
 }

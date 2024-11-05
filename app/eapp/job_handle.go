@@ -132,7 +132,7 @@ func (a *App) runAllJob(ctx context.Context) error {
 						errCh <- errors.Errorf("{key: %s, panic: %v}", key, r)
 					}
 				}()
-				err := job.Run()
+				err := job.Run(ctx)
 				if err != nil {
 					errCh <- errors.Errorf("{key: %s, err: %v}", key, err)
 				}

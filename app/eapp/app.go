@@ -5,7 +5,7 @@ import "context"
 type (
 	Job interface {
 		Init(ctx context.Context, config any) error
-		Run() error
+		Run(ctx context.Context) error
 		Close(ctx context.Context) error
 	}
 
